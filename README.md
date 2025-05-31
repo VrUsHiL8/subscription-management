@@ -76,19 +76,21 @@ Edit
 
 ### 🖥️ Backend Setup
 
-```bash
+
 cd backend
 ./mvnw spring-boot:run
-🌐 Frontend Setup
-bash
-Copy
-Edit
+
+---
+
+###🌐 Frontend Setup
+
 cd frontend
 npm install
 ng serve
 Open your browser at http://localhost:4200
+---
 
-🧪 API Endpoints
+###🧪 API Endpoints
 Endpoint	Method	Description
 /api/auth/signup	POST	Register a new user
 /api/auth/login	POST	User login, returns JWT token
@@ -98,23 +100,27 @@ Endpoint	Method	Description
 /api/subscriptions/{id}	DELETE	Delete subscription by ID
 /api/renewals	GET	Get upcoming/early renewals
 
-🔒 Security
+---
+
+###🔒 Security
 JWT-based authentication for secure access
 
 Passwords are stored hashed and salted
 
 OAuth integration planned for Google and other providers
 
-📈 Future Enhancements
+---
+
+###📈 Future Enhancements
 Full OAuth 2.0 integration for third-party subscriptions
 
 Notifications for upcoming renewals
 
 Analytics dashboard for subscription spending
 
-Mobile app version
+---
 
-🤝 Contributing
+###🤝 Contributing
 Contributions, issues, and feature requests are welcome!
 Feel free to check the issues page and submit PRs.
 
