@@ -1,0 +1,599 @@
+@startuml
+actor User
+actor Admin
+
+User -> (Sign Up)
+(Sign Up) -> (Login)
+(Login) -> (View Subscriptions)
+(Login)  -> (Subscribe to a Plan)
+(Login)  -> (Renew Subscription)
+
+Admin -> (Manage Users)
+Admin -> (Manage Subscription Details)
+Admin -> (Manage and Approve Renewals)
+
+@enduml
+
+
+@startuml
+
+class User {
+    +int userId
+    +String name
+    +String email
+    +String password
+    +String phoneNumber
+    +Role role
+    +boolean emailVerified()
+}
+
+class Subscription {
+    +int subscriptionId
+    +Date startDate
+    +Date endDate
+    +SubscriptionStatus status
+    +String getAppName()
+    +String getCategoryType()
+    +PlanType getPlanType()
+    +BigDecimal getPrice()
+}
+
+class Plan {
+    +int planId
+    +BillingCycle billingCycle
+    +BigDecimal price
+    +String features
+    +PlanType planType
+    +LocalDate createdAt
+    +LocalDate updatedAt
+}
+
+class App {
+    +Long appId
+    +String appName
+    +String logoUrl
+    +String website
+}
+
+class Category {
+    +Long categoryId
+    +String categoryType
+    +String description
+    +LocalDate createdAt
+}
+
+class Renewal {
+    +Long renewalId
+    +LocalDate renewalDate
+    +BigDecimal renewalPrice
+    +TransactionStatus status
+    +Boolean initiatedEarly
+    +LocalDate createdAt
+    +LocalDate updatedAt
+    +String getAppName()
+    +String getPlanType()
+    +String getBillingCycle()
+}
+
+User "1" --> "0..*" Subscription : subscribes
+Subscription "1" --> "1" Plan : has
+Subscription "1" --> "1" App : for
+Subscription "1" --> "1" Category : in
+Plan "1" --> "1" App : belongs to
+App "1" --> "0..*" Plan : offers
+App "1" --> "1" Category : categorized in
+Category "1" --> "0..*" App : has
+Subscription "1" --> "0..*" Renewal : includes
+Renewal "1" --> "1" User : by
+Renewal "1" --> "1" Plan : for
+Renewal "1" --> "1" Subscription : related to
+
+
+@enduml
+
+
+
+@startuml
+actor User
+
+' Signup Process
+User -> UserService : Enter signup credentials
+UserService -> UserRepository : Save user details
+UserRepository -> UserService : Return success/fail
+UserService -> User : Redirect to login
+
+' Login Process
+User -> UserService : Enter login credentials
+UserService -> UserRepository : Validate credentials
+UserRepository -> UserService : Return user data
+UserService -> User : Success/fail login
+
+' Viewing Subscriptions
+User -> SubscriptionService : Request subscriptions
+SubscriptionService -> SubscriptionRepository : Fetch subscriptions
+SubscriptionRepository -> SubscriptionService : Return subscription list
+SubscriptionService -> User : Display subscriptions
+
+' Subscribing to a Plan
+User -> SubscriptionService : Subscribe to a plan
+SubscriptionService -> SubscriptionRepository : Save subscription details
+SubscriptionRepository -> SubscriptionService : Return success/fail
+SubscriptionService -> User : Success/fail message
+
+' Renewing a Subscription
+User -> SubscriptionService : Renew subscription
+SubscriptionService -> SubscriptionRepository : Update subscription date
+SubscriptionRepository -> SubscriptionService : Return success/fail
+SubscriptionService -> User : Success/fail message
+
+@enduml
+
+
+@startuml
+start
+:User Logs In;
+:View Available Subscriptions;
+if (Select a Plan?) then (yes)
+  :Proceed to Subscribe;
+  :Activate Subscription;
+else (no)
+  :Exit;
+endif
+:View Active Subscriptions;
+if (Renew Subscription?) then (yes)
+  :Process Renewal;
+  :Update Subscription;
+else (no)
+  :Wait for Expiry Notification;
+endif
+stop
+@enduml
+
+
+@startuml
+[*] --> Active
+Active --> Expired : subscription expires
+Expired --> Renewed : renew subscription
+Renewed --> Active : activate
+Active --> Canceled : user cancels
+Canceled --> Deleted : delete record
+@enduml
+
+
+@startuml
+skinparam shadowing false
+skinparam rectangle {
+  StereotypeFontSize 14
+  StereotypeFontColor black
+  RoundCorner 10
+}
+
+actor User
+actor Admin
+
+rectangle "1.0 Manage User" as P1
+rectangle "2.0 Handle Subscriptions" as P2
+rectangle "3.0 Plan & App Management" as P3
+rectangle "4.0 Renewal Processing" as P4
+
+database "D1: User Data" as D1
+database "D2: Subscription Data" as D2
+database "D3: Plan Data" as D3
+database "D4: App Data" as D4
+database "D5: Category Data" as D5
+database "D6: Renewal Data" as D6
+
+' --- Flows from User
+User --> P1 : Register / Login
+P1 --> D1 : Store / Fetch User Info
+
+User --> P2 : Subscribe / View Subscription
+P2 --> D2 : Store / Retrieve Subscription Info
+P2 --> D3 : Get Plan Info
+P2 --> D4 : Get App Info
+P2 --> D5 : Get Category Info
+P2 --> User : Subscription Status / Details
+
+' --- Admin managing data
+Admin --> P3 : Manage Plans / Apps / Categories
+P3 --> D3 : CRUD Plan
+P3 --> D4 : CRUD App
+P3 --> D5 : CRUD Category
+
+' --- Renewal process
+P4 --> D2 : Get Subscription Info
+P4 --> D6 : Store Renewal Record
+P4 --> D1 : Get User Info
+P4 --> D3 : Get Plan Info
+
+@enduml
+
+
+@startuml
+skinparam rectangle {
+  RoundCorner 15
+}
+
+actor User
+
+package "Frontend" {
+  rectangle "Angular\n(Web UI)" as AngularUI
+}
+
+package "Backend (Spring Boot)" {
+  rectangle "User Controller" as UserAPI
+  rectangle "Subscription Controller" as SubAPI
+  rectangle "Plan/App Management" as PlanAPI
+  rectangle "Renewal Scheduler\n(Cron)" as Scheduler
+  rectangle "Email Service\n(JavaMail / SMTP)" as EmailService
+  rectangle "Auth Service\n(JWT Auth)" as AuthService
+}
+
+database "MySQL Database" as MySQL
+
+' External Interaction
+User --> AngularUI : Interacts via Browser
+
+' Frontend <-> Backend
+AngularUI --> UserAPI : User Actions (login, register)
+AngularUI --> SubAPI : Subscribe / View / Cancel
+AngularUI --> PlanAPI : Fetch Plans / Apps
+
+' Backend Components
+UserAPI --> AuthService : JWT Verification
+UserAPI --> MySQL : User Data
+SubAPI --> MySQL : Subscriptions, Renewals
+PlanAPI --> MySQL : Plans, Apps, Categories
+
+Scheduler --> MySQL : Read Subscriptions
+Scheduler --> EmailService : Send Reminders
+
+EmailService --> MySQL : Fetch User Email
+
+@enduml
+
+
+@startuml
+
+actor User
+participant "Angular UI" as UI
+participant "Spring Boot API" as API
+participant "SubscriptionService" as Service
+participant "MySQL DB" as DB
+participant "EmailService" as Email
+
+User -> UI : Click Subscribe
+UI -> API : POST /api/subscriptions
+API -> Service : createSubscription()
+Service -> DB : save(Subscription)
+Service -> Email : sendConfirmation()
+Email -> User : Subscription Email
+Service --> API : success response
+API --> UI : 200 OK
+
+@enduml
+
+
+@startuml
+
+start
+:Fetch active subscriptions;
+if (Renewal date == today?) then (yes)
+  :Calculate next date;
+  :Create Renewal record;
+  :Send email;
+else (no)
+  :Skip;
+endif
+stop
+
+@enduml
+
+
+@startuml
+
+skinparam classAttributeIconSize 0
+skinparam classFontName "Arial"
+skinparam classFontSize 12
+
+' Entities
+class User {
+  +int userId
+  +String name
+  +String email
+  +String password
+  +String phoneNumber
+  +Role role
+  +boolean emailVerified()
+}
+
+class Subscription {
+  +int subscriptionId
+  +Date startDate
+  +Date endDate
+  +SubscriptionStatus status
+}
+
+class Plan {
+  +int planId
+  +String planName
+  +double price
+  +String billingCycle
+}
+
+class App {
+  +int appId
+  +String appName
+  +String logoUrl
+  +String website
+}
+
+class Category {
+  +int categoryId
+  +String categoryType
+  +String description
+}
+
+class Renewal {
+  +int renewalId
+  +Date renewalDate
+  +BigDecimal renewalPrice
+  +TransactionStatus status
+}
+
+' Relationships
+User "1" --> "0..*" Subscription : subscribes
+Subscription "1" --> "1" Plan : belongs to
+Subscription "1" --> "1" App : belongs to
+Subscription "1" --> "1" Category : belongs to
+Renewal "1" --> "1" Subscription : part of
+Renewal "1" --> "1" Plan : belongs to
+Renewal "1" --> "1" User : belongs to
+App "1" --> "0..*" Plan : has
+App "1" --> "1" Category : belongs to
+
+@enduml
+
+
+@startuml
+
+skinparam rectangle {
+  RoundCorner 15
+}
+
+actor User
+
+package "Frontend (Angular)" {
+  rectangle "Angular UI\n(Web)" as Angular
+}
+
+package "Backend (Spring Boot)" {
+  rectangle "User Controller" as UserController
+  rectangle "Subscription Controller" as SubscriptionController
+  rectangle "Plan Management" as PlanManagement
+  rectangle "Renewal Scheduler" as RenewalScheduler
+  rectangle "Email Service" as EmailService
+  rectangle "Auth Service (JWT)" as AuthService
+}
+
+database "MySQL Database" as MySQL
+
+' Frontend interactions
+User --> Angular : Interacts with UI
+Angular --> UserController : Login, Register, Fetch User
+Angular --> SubscriptionController : Subscribe, View Plans
+
+' Backend components
+UserController --> AuthService : Authenticate User
+SubscriptionController --> MySQL : CRUD Subscriptions
+PlanManagement --> MySQL : Manage Plans, Apps and Categories
+SubscriptionController --> RenewalScheduler : Trigger Renewal Logic
+RenewalScheduler --> MySQL : Check Expiring Subscriptions
+RenewalScheduler --> EmailService : Send Renewal Reminders
+
+@enduml
+
+
+@startuml
+
+class User {
+  +int userId
+  +String name
+  +String email
+  +String password
+  +String phoneNumber
+  +Role role
+  +boolean emailVerified()
+}
+
+class Subscription {
+  +int subscriptionId
+  +LocalDate startDate
+  +LocalDate endDate
+  +SubscriptionStatus status
+}
+
+class Plan {
+  +int planId
+  +String planName
+  +BigDecimal price
+  +String billingCycle
+}
+
+class Renewal {
+  +int renewalId
+  +LocalDate renewalDate
+  +BigDecimal renewalPrice
+  +TransactionStatus status
+}
+
+class App {
+  +int appId
+  +String appName
+  +String logoUrl
+  +String website
+}
+
+class Category {
+  +int categoryId
+  +String categoryType
+  +String description
+}
+
+' Relationships
+User "1" --> "0..*" Subscription : subscribes
+Subscription "1" --> "1" Plan : belongs to
+Subscription "1" --> "1" App : belongs to
+Subscription "1" --> "1" Category : belongs to
+Renewal "1" --> "1" Subscription : part of
+Renewal "1" --> "1" Plan : belongs to
+Renewal "1" --> "1" User : belongs to
+App "1" --> "0..*" Plan : has
+App "1" --> "1" Category : belongs to
+
+@enduml
+
+
+@startuml
+
+actor User
+participant "Angular UI" as UI
+participant "Spring Boot API" as API
+participant "SubscriptionService" as Service
+participant "MySQL DB" as DB
+participant "EmailService" as Email
+
+User -> UI : Click Subscribe
+UI -> API : POST /api/subscriptions
+API -> Service : createSubscription()
+Service -> DB : save(Subscription)
+Service -> Email : sendConfirmation()
+Email -> User : Subscription Email
+Service --> API : success response
+API --> UI : 200 OK
+
+@enduml
+
+
+@startuml
+
+start
+:Fetch active subscriptions;
+if (Renewal date == today?) then (yes)
+  :Calculate next date;
+  :Create Renewal record;
+  :Send email;
+else (no)
+  :Skip;
+endif
+stop
+
+@enduml
+
+
+@startuml SubscriptionHLD
+
+package "Subscription Management System" {
+
+    class User
+    class Subscription
+    class Renewal
+    class App
+    class Plan
+    class Category
+}
+
+User --> Subscription : has
+User --> Renewal : triggers
+Subscription --> App : for
+Subscription --> Plan : has
+Subscription --> Category : belongs to
+Renewal --> Plan : on
+Renewal --> Subscription : of
+App --> Category : belongs to
+App --> Plan : offers
+
+@enduml
+
+
+
+
+@startuml SubscriptionLLD
+
+hide circle
+skinparam classAttributeIconSize 0
+
+class User {
+    +Long userId
+    +String providerId
+    +String name
+    +String email
+    +String profilePicture
+    +String password
+    +Boolean isOAuthUser
+    +String phone
+    +Role role
+    +String provider
+    +Boolean emailVerified
+    +String resetToken
+    +LocalDate createdAt
+    +LocalDate updatedAt
+}
+
+class Category {
+    +Long categoryId
+    +String categoryType
+    +String description
+    +LocalDate createdAt
+}
+
+class App {
+    +Long appId
+    +String appName
+    +String logoUrl
+    +String website
+}
+
+class Plan {
+    +Long planId
+    +BillingCycle billingCycle
+    +BigDecimal price
+    +String features
+    +PlanType planType
+    +LocalDate createdAt
+    +LocalDate updatedAt
+}
+
+class Subscription {
+    +Long subscriptionId
+    +LocalDate startDate
+    +LocalDate endDate
+    +SubscriptionStatus status
+}
+
+class Renewal {
+    +Long renewalId
+    +LocalDate renewalDate
+    +BigDecimal renewalPrice
+    +TransactionStatus status
+    +Boolean initiatedEarly
+    +LocalDate createdAt
+    +LocalDate updatedAt
+}
+
+' Relationships
+User --> "0..*" Subscription : has >
+User --> "0..*" Renewal : triggers >
+Category --> "0..*" App : contains >
+App --> "0..*" Plan : offers >
+App --> Category : belongs to >
+Plan --> App : for >
+Subscription --> App : is for >
+Subscription --> Plan : has >
+Subscription --> User : belongs to >
+Subscription --> Category : categorized >
+Renewal --> Plan : for plan >
+Renewal --> Subscription : belongs to >
+Renewal --> User : initiated by >
+
+@enduml
