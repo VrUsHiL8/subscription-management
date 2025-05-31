@@ -72,8 +72,7 @@ subscription-management/
 
 ### 🖥️ Backend Setup
 
-
--cd backend
+cd backend
 ./mvnw spring-boot:run
 
 ---
@@ -87,6 +86,7 @@ Open your browser at http://localhost:4200
 ---
 
 ### 🧪 API Endpoints
+
 Endpoint	Method	Description
 /api/auth/signup	POST	Register a new user
 /api/auth/login	POST	User login, returns JWT token
@@ -99,6 +99,7 @@ Endpoint	Method	Description
 ---
 
 ### 🔒 Security
+
 JWT-based authentication for secure access
 
 Passwords are stored hashed and salted
@@ -108,15 +109,17 @@ OAuth integration planned for Google and other providers
 ---
 
 ### 📈 Future Enhancements
+
 Full OAuth 2.0 integration for third-party subscriptions
 
 Notifications for upcoming renewals
 
--Analytics dashboard for subscription spending
+Analytics dashboard for subscription spending
 
 ---
 
 ### 🤝 Contributing
+
 Contributions, issues, and feature requests are welcome!
 Feel free to check the issues page and submit PRs.
 
