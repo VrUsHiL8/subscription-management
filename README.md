@@ -66,10 +66,6 @@ subscription-management/
 ├── .gitignore
 └── README.md
 
-yaml
-Copy
-Edit
-
 ---
 
 ## 🚀 Getting Started
@@ -77,50 +73,50 @@ Edit
 ### 🖥️ Backend Setup
 
 
-cd backend
-./mvnw spring-boot:run
+-cd backend
+-./mvnw spring-boot:run
 
 ---
 
-###🌐 Frontend Setup
+### 🌐 Frontend Setup
 
-cd frontend
-npm install
-ng serve
+-cd frontend
+-npm install
+-ng serve
 Open your browser at http://localhost:4200
 ---
 
-###🧪 API Endpoints
+### 🧪 API Endpoints
 Endpoint	Method	Description
-/api/auth/signup	POST	Register a new user
-/api/auth/login	POST	User login, returns JWT token
-/api/subscriptions	GET	Get all subscriptions
-/api/subscriptions	POST	Add a new subscription
-/api/subscriptions/{id}	PUT	Update subscription by ID
-/api/subscriptions/{id}	DELETE	Delete subscription by ID
-/api/renewals	GET	Get upcoming/early renewals
+-/api/auth/signup	POST	Register a new user
+-/api/auth/login	POST	User login, returns JWT token
+-/api/subscriptions	GET	Get all subscriptions
+-/api/subscriptions	POST	Add a new subscription
+-/api/subscriptions/{id}	PUT	Update subscription by ID
+-/api/subscriptions/{id}	DELETE	Delete subscription by ID
+-/api/renewals	GET	Get upcoming/early renewals
 
 ---
 
-###🔒 Security
-JWT-based authentication for secure access
+### 🔒 Security
+-JWT-based authentication for secure access
 
-Passwords are stored hashed and salted
+-Passwords are stored hashed and salted
 
-OAuth integration planned for Google and other providers
-
----
-
-###📈 Future Enhancements
-Full OAuth 2.0 integration for third-party subscriptions
-
-Notifications for upcoming renewals
-
-Analytics dashboard for subscription spending
+-OAuth integration planned for Google and other providers
 
 ---
 
-###🤝 Contributing
-Contributions, issues, and feature requests are welcome!
-Feel free to check the issues page and submit PRs.
+### 📈 Future Enhancements
+-Full OAuth 2.0 integration for third-party subscriptions
+
+-Notifications for upcoming renewals
+
+-Analytics dashboard for subscription spending
+
+---
+
+### 🤝 Contributing
+-Contributions, issues, and feature requests are welcome!
+-Feel free to check the issues page and submit PRs.
 
