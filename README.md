@@ -22,7 +22,6 @@
 - [🔒 Security](#-security)
 - [📈 Future Enhancements](#-future-enhancements)
 - [🤝 Contributing](#-contributing)
-- [📝 License](#-license)
 
 ---
 
@@ -52,19 +51,64 @@
 
 ## 📁 Project Structure
 
-subscription-management/
-├── backend/ # Spring Boot backend application
-│ ├── src/
-│ │ ├── main/
-│ │ │ ├── java/ # Java source code (controllers, services, models)
-│ │ │ └── resources/ # Application properties, configs
-│ └── pom.xml # Maven configuration
-├── frontend/ # Angular frontend application
-│ ├── src/
-│ │ ├── app/ # Angular components, services, modules
-│ │ ├── assets/ # Static assets (images, styles)
-│ └── angular.json # Angular CLI config
-├── .gitignore
-└── README.md
+---
+
+## 🚀 Getting Started
+
+### 🖥️ Backend Setup
+
+```bash
+cd backend
+./mvnw spring-boot:run
+
+### 🖥️ Frontend Setup
+
+---
+
+```bash
+cd frontend
+npm install
+ng serve
+
+---
+
+### 🧪 API Endpoints
+
+| Endpoint                  | Method | Description                   |
+| ------------------------- | ------ | ----------------------------- |
+| `/api/auth/signup`        | POST   | Register a new user           |
+| `/api/auth/login`         | POST   | User login, returns JWT token |
+| `/api/subscriptions`      | GET    | Get all subscriptions         |
+| `/api/subscriptions`      | POST   | Add a new subscription        |
+| `/api/subscriptions/{id}` | PUT    | Update subscription by ID     |
+| `/api/subscriptions/{id}` | DELETE | Delete subscription by ID     |
+| `/api/renewals`           | GET    | Get upcoming/early renewals   |
+
+)
+
+---
+
+🔒 Security
+JWT-based authentication for secure access.
+
+Passwords stored hashed and salted.
+
+Planned OAuth integration for Google and other providers.
+
+---
+
+📈 Future Enhancements
+Full OAuth 2.0 integration for third-party subscriptions.
+
+Notifications for upcoming renewals.
+
+Analytics dashboard for subscription spending.
+
+Mobile app version.
+
+---
+
+🤝 Contributing
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
 
 
