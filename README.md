@@ -51,20 +51,23 @@
 
 ## 📁 Project Structure
 
+```
 subscription-management/
-├── backend/ # Spring Boot backend application
-│ ├── src/
-│ │ ├── main/
-│ │ │ ├── java/ # Java source code (controllers, services, models)
-│ │ │ └── resources/ # Application properties, configs
-│ └── pom.xml # Maven config
-├── frontend/ # Angular frontend application
-│ ├── src/
-│ │ ├── app/ # Angular components, services, modules
-│ │ ├── assets/ # Static assets (images, styles)
-│ └── angular.json # Angular CLI config
+├── backend/               # Spring Boot backend application
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/      # Java source code (controllers, services, models)
+│   │   │   └── resources/ # Application properties, configs
+│   └── pom.xml            # Maven config
+├── frontend/              # Angular frontend application
+│   ├── src/
+│   │   ├── app/           # Angular components, services, modules
+│   │   ├── assets/        # Static assets (images, styles)
+│   └── angular.json       # Angular CLI config
 ├── .gitignore
 └── README.md
+
+```
 
 ---
 
