@@ -72,16 +72,20 @@ subscription-management/
 
 ### 🖥️ Backend Setup
 
+```bash
 cd backend
 ./mvnw spring-boot:run
+```
 
 ---
 
 ### 🌐 Frontend Setup
 
+```bash
 cd frontend
 npm install
 ng serve
+```
 Open your browser at http://localhost:4200
 ---
 
